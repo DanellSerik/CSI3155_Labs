@@ -1,8 +1,8 @@
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Top level: connects control_unit and datapath.
+-- Top level: connects control_unit and datapath. INIT now fans out
+-- to both blocks, since the datapath's registers reset directly too.
 entity moving_lights is
     port (
         CLK, INIT, LEFT, RIGHT : in  STD_LOGIC;
@@ -11,37 +11,28 @@ entity moving_lights is
 end moving_lights;
 
 architecture structural of moving_lights is
-    signal selLMASK, loadLMASK   : STD_LOGIC;
-    signal selRMASK, loadRMASK   : STD_LOGIC;
-    signal selDISPLAY1           : STD_LOGIC;
-    signal selDISPLAY2           : STD_LOGIC;
-    signal loadDISPLAY           : STD_LOGIC;
+    signal selLMASK, loadLMASK : STD_LOGIC;
+    signal selRMASK, loadRMASK : STD_LOGIC;
+    signal selDISPLAY1         : STD_LOGIC;
+    signal selDISPLAY2         : STD_LOGIC;
+    signal loadDISPLAY         : STD_LOGIC;
 begin
 
-    CU: entity work.Control_Unit
+    CU: entity work.control_unit
         port map (
-            CLK         => CLK,
-            INIT        => INIT,
-            LEFT        => LEFT,
-            RIGHT       => RIGHT,
-            selLMASK    => selLMASK,
-            loadLMASK   => loadLMASK,
-            selRMASK    => selRMASK,
-            loadRMASK   => loadRMASK,
-            selDISPLAY1 => selDISPLAY1,
-            selDISPLAY2 => selDISPLAY2,
+            CLK => CLK, INIT => INIT, LEFT => LEFT, RIGHT => RIGHT,
+            selLMASK => selLMASK, loadLMASK => loadLMASK,
+            selRMASK => selRMASK, loadRMASK => loadRMASK,
+            selDISPLAY1 => selDISPLAY1, selDISPLAY2 => selDISPLAY2,
             loadDISPLAY => loadDISPLAY
         );
 
-    DP: entity work.Datapath
+    DP: entity work.datapath
         port map (
-            CLK         => CLK,
-            selLMASK    => selLMASK,
-            loadLMASK   => loadLMASK,
-            selRMASK    => selRMASK,
-            loadRMASK   => loadRMASK,
-            selDISPLAY1 => selDISPLAY1,
-            selDISPLAY2 => selDISPLAY2,
+            CLK => CLK, INIT => INIT,
+            selLMASK => selLMASK, loadLMASK => loadLMASK,
+            selRMASK => selRMASK, loadRMASK => loadRMASK,
+            selDISPLAY1 => selDISPLAY1, selDISPLAY2 => selDISPLAY2,
             loadDISPLAY => loadDISPLAY,
             DISPLAY_OUT => DISPLAY
         );
