@@ -1,8 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- 8-bit 2:1 mux, built structurally from 8 instances of mux2_1
--- (one per bit -- used for the LMASK and RMASK load-value muxes).
+
 entity mux2_8 is
     port ( sel      : in  STD_LOGIC;
            in0, in1 : in  STD_LOGIC_VECTOR(7 downto 0);

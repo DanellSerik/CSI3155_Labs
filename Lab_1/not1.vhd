@@ -1,7 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Basic inverter
 entity not1 is
     port ( a : in  STD_LOGIC;
            y : out STD_LOGIC );

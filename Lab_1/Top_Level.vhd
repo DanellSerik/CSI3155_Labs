@@ -1,9 +1,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Top level: connects control_unit and datapath. INIT now fans out
--- to both blocks, since the datapath's registers reset directly too.
 entity moving_lights is
+    generic ( DIV_TERMINAL_COUNT : natural := 99_999_999 );
     port (
         CLK, INIT, LEFT, RIGHT : in  STD_LOGIC;
         DISPLAY                : out STD_LOGIC_VECTOR(7 downto 0)
@@ -16,11 +15,16 @@ architecture structural of moving_lights is
     signal selDISPLAY1         : STD_LOGIC;
     signal selDISPLAY2         : STD_LOGIC;
     signal loadDISPLAY         : STD_LOGIC;
+    signal EN                  : STD_LOGIC;
 begin
+
+    DIV: entity work.clock_divider
+        generic map ( WIDTH => 27, TERMINAL_COUNT => DIV_TERMINAL_COUNT )
+        port map ( CLK => CLK, RST => INIT, TICK => EN );
 
     CU: entity work.control_unit
         port map (
-            CLK => CLK, INIT => INIT, LEFT => LEFT, RIGHT => RIGHT,
+            CLK => CLK, EN => EN, INIT => INIT, LEFT => LEFT, RIGHT => RIGHT,
             selLMASK => selLMASK, loadLMASK => loadLMASK,
             selRMASK => selRMASK, loadRMASK => loadRMASK,
             selDISPLAY1 => selDISPLAY1, selDISPLAY2 => selDISPLAY2,
@@ -29,7 +33,7 @@ begin
 
     DP: entity work.datapath
         port map (
-            CLK => CLK, INIT => INIT,
+            CLK => CLK, EN => EN, INIT => INIT,
             selLMASK => selLMASK, loadLMASK => loadLMASK,
             selRMASK => selRMASK, loadRMASK => loadRMASK,
             selDISPLAY1 => selDISPLAY1, selDISPLAY2 => selDISPLAY2,

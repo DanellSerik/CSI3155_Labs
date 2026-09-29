@@ -1,14 +1,10 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Datapath: built structurally from mux2_8, mux4_8, or8 and reg8
--- components. INIT now feeds every register's reset directly, so
--- LMASK/RMASK/DISPLAY all land on a known value the instant reset
--- is applied, rather than waiting for the FSM to reach a state
--- that happens to load them.
 entity datapath is
     port (
         CLK                       : in  STD_LOGIC;
+        EN                        : in  STD_LOGIC;
         INIT                      : in  STD_LOGIC;
         selLMASK, loadLMASK       : in  STD_LOGIC;
         selRMASK, loadRMASK       : in  STD_LOGIC;
@@ -30,8 +26,6 @@ architecture structural of datapath is
     constant ALL_OFF   : STD_LOGIC_VECTOR(7 downto 0) := "00000000";
 begin
 
-    -- <<1 / >>1 are pure rewiring (bus routing), not logic gates,
-    -- so they stay as plain signal assignments rather than components.
     LMASK_shifted <= LMASK_q(6 downto 0) & '0';
     RMASK_shifted <= '0' & RMASK_q(7 downto 1);
 
@@ -39,13 +33,13 @@ begin
         port map ( sel => selLMASK, in0 => ONE_LEFT, in1 => LMASK_shifted, y => LMASK_mux_out );
 
     REG_L: entity work.reg8 generic map ( RESET_VALUE => ONE_LEFT )
-        port map ( d => LMASK_mux_out, load => loadLMASK, rst => INIT, clk => CLK, q => LMASK_q );
+        port map ( d => LMASK_mux_out, load => loadLMASK, rst => INIT, en => EN, clk => CLK, q => LMASK_q );
 
     MUX_R: entity work.mux2_8
         port map ( sel => selRMASK, in0 => ONE_RIGHT, in1 => RMASK_shifted, y => RMASK_mux_out );
 
     REG_R: entity work.reg8 generic map ( RESET_VALUE => ONE_RIGHT )
-        port map ( d => RMASK_mux_out, load => loadRMASK, rst => INIT, clk => CLK, q => RMASK_q );
+        port map ( d => RMASK_mux_out, load => loadRMASK, rst => INIT, en => EN, clk => CLK, q => RMASK_q );
 
     OR_MASKS: entity work.or8
         port map ( a => LMASK_q, b => RMASK_q, y => or_mask );
@@ -58,7 +52,7 @@ begin
                    y   => display_mux_out );
 
     REG_D: entity work.reg8 generic map ( RESET_VALUE => ALL_OFF )
-        port map ( d => display_mux_out, load => loadDISPLAY, rst => INIT, clk => CLK, q => DISPLAY_q );
+        port map ( d => display_mux_out, load => loadDISPLAY, rst => INIT, en => EN, clk => CLK, q => DISPLAY_q );
 
     DISPLAY_OUT <= DISPLAY_q;
 

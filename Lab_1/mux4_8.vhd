@@ -1,9 +1,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- 8-bit 4:1 mux, built structurally from three mux2_8 instances
--- (standard binary mux tree -- used for the DISPLAY mux).
--- sel = "00" -> in0, "01" -> in1, "10" -> in2, "11" -> in3
+-- 8-bit 4:1 mux, built from three mux2_8
+-- used for the DISPLAY mux
 entity mux4_8 is
     port ( sel                    : in  STD_LOGIC_VECTOR(1 downto 0);
            in0, in1, in2, in3     : in  STD_LOGIC_VECTOR(7 downto 0);

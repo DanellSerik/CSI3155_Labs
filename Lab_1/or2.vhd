@@ -1,7 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Basic 2-input OR gate
 entity or2 is
     port ( a, b : in  STD_LOGIC;
            y    : out STD_LOGIC );

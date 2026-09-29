@@ -1,8 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- 1-bit 2:1 mux, built structurally from gates:
---   y = (sel' . in0) + (sel . in1)
 entity mux2_1 is
     port ( sel      : in  STD_LOGIC;
            in0, in1 : in  STD_LOGIC;

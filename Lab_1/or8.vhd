@@ -1,8 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- 8-bit bitwise OR, built structurally from 8 instances of or2
--- (used to combine LMASK and RMASK for the DISPLAY mux).
 entity or8 is
     port ( a, b : in  STD_LOGIC_VECTOR(7 downto 0);
            y    : out STD_LOGIC_VECTOR(7 downto 0) );
